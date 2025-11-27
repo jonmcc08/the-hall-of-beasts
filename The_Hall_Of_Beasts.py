@@ -7,8 +7,7 @@ import time # For dialouge delays (Printing slower)
 class Adventurer(): # Instead of calling the class "Player", we call it Adventurer
     # Defines the Adventurers name and creates the properties of the player.
     def __init__(self):
-        self.name = input("""Enter the adventurers name.
-> """).upper()
+        self.name = input("""Enter the adventurers name. \n> """).upper()
         self.inventory = {} # Showcases possesed items.
         self.properties = [5, 1, 0] # Includes in following order: 5 HP, 1 STR, 0 LVL.
 
@@ -62,7 +61,17 @@ class Item():
         
         return item, rarity
 
-    def inventory():
+    def inventory(self):
+        i = 1
+        for item_ID_inventory in adventurer.inventory.keys():
+            current_item = ""
+            for char in item_ID_inventory:
+                if char.isalpha():
+                    current_item += char
+                else:
+                    break
+            print(f"{i}. {current_item}: {adventurer.inventory[item_ID_inventory]}")
+            i += 1
         pass
 
 def monster_hp_calculation():
@@ -91,14 +100,7 @@ story_printing(f"Welcome to the Hall of Beasts, {adventurer.name}", 0.1)
 
 # While Loop
 while True:    
-    door_choice = input("""
-What's your choice?           
-[A] Door 1 (To the left)
-[B] Door 2 (Forward)
-[C] Door 3 (To the right)
-[D] See adventurer stats
-[E] See adventurer inventory
-> """).lower()
+    door_choice = input("""What's your choice?\n[A] Door 1 (To the left)\n[B] Door 2 (Forward)\n[C] Door 3 (To the right)\n[D] See adventurer stats\n[E] See adventurer inventory\n> """).lower()
 
     door_choice_result = random.choice(contents)
 
@@ -112,15 +114,11 @@ What's your choice?
         print(f"You open door 3 and found a {door_choice_result}!")
 
     elif door_choice == "d":
-        print(f"""
-Current HP: {adventurer.properties[0]}
-Current STR: {adventurer.properties[1]}
-Current LVL: {adventurer.properties[2]}
-              """)
+        print(f"""Current HP: {adventurer.properties[0]}\nCurrent STR: {adventurer.properties[1]}\nCurrent LVL: {adventurer.properties[2]}""")
         continue
     
     elif door_choice == "e":
-        # Fix this later   
+        item.inventory()
         continue
     
     else:
@@ -162,35 +160,31 @@ story_printing(f"You may have gotten passed my minions {adventurer.name}, but I'
 story_printing("You came to fight? Let's see what you got!", 0.1)
 
 #BOSS fight !
-while final_boss.properties[1] > 0:
-    BOSS_fight_action = input("""
-What will you do?           
-[A] Fight! 
-[B] Block!
-[C] Dodge!
-[D] Drink potion!
-> """).lower()
+while final_boss.properties[0] > 0:
+    BOSS_fight_action = input("""What will you do?\n[A] Fight!\n[B] Block!\n[C] Dodge!\n[D] Drink potion!\n> """).lower()
     
-#Actions
-if BOSS_fight_action =="a":
-    print("You slash Hugo Beast with all you're might !")
-    {final_boss.properties} - {adventurer.properties[1]} 
-
-elif BOSS_fight_action =="b":
-    Block_ods = random.randint(1,101)
-    if Block_ods == range(1,50):
-        print("You managed to block the Beasts attack")
+    #Actions
+    if BOSS_fight_action =="a":
+        print("You slash Hugo Beast with all you're might !")
+        {final_boss.properties} - {adventurer.properties[1]} 
         
-elif BOSS_fight_action =="c":
+    elif BOSS_fight_action =="b":
+        Block_ods = random.randint(1,101)
+        if Block_ods == range(1,51):
+            print("You managed to block the Beasts attack")
+            print("Hugo became stunned")        
     
- Dodge_ods = random.randint(1,101)
- if Dodge_ods == range(1,70):
-     print("You manage to dodge the Beasts attack")
+    elif BOSS_fight_action =="c":
+        Dodge_ods = random.randint(1,101)
+        if Dodge_ods == range(1,71):
+            print("You manage to dodge the Beasts attack")
 
-elif BOSS_fight_action == "d":
-    if item.potion >= 1:
-        {adventurer.property[0]} += 1
-        print("You drank a potion and gained HP")
-        print(f"You now have {adventurer.properties[0]} HP")
-    elif item.potion < 1:
-        print("oh,no! You have no more potion. You have to make another choice")
+    elif BOSS_fight_action == "d":
+        if item.potion >= 1:
+            adventurer.property[0] += 1
+            print("You drank a potion and gained HP")
+            print(f"You now have {adventurer.properties[0]} HP")
+            continue
+        elif item.potion < 1:
+            print("oh,no! You have no more potion. You have to make another choice")
+            continue
