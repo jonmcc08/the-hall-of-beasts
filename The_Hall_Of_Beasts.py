@@ -12,18 +12,25 @@ class Adventurer(): # Instead of calling the class "Player", we call it Adventur
         self.potions = {}
         self.properties = [5, 1, 0] # Includes in following order: 5 HP, 1 STR, 0 LVL.
 
-    def monster(self, monster):
-        if monster == 1:
-            self.properties[0] -= 1
-            print(f"You have {self.properties[0]} HP left")
-        else:
+    def monster(self, hp):
+
+        print("a very large and intimidating monster. You better prepare for battle!")
+        time.sleep(1)
+        if self.properties[1] > hp:
             self.properties[2] += 1
+            print(f"You defeated the monster and leveled up! \nYou are now LVL: {self.properties[2]}\n")
+        elif self.properties[1] < hp:
+            self.properties[0] -= 1
+            print(f"The monster posseses unimaginable strength and overpowers you! \nYou now have {self.properties[0]} HP left.\n")
+        elif self.properties[1] == hp:
+            print("You both posses the same level of strength causing a stalemate!\nNothing happens.\n")
 
     def trap(self, trap):
         self.properties[0] -= trap
-        print(f"You have {self.properties[0]} HP left")
+        print(f"a trap and took 1 points of damage \n You now have {self.properties[0]} HP left.\n")
 
     def chest(self, found_item, stat):
+        
         self.inventory[found_item + str(item.item_ID)] = stat 
 
     def strenght(self, str_increase):
@@ -31,16 +38,56 @@ class Adventurer(): # Instead of calling the class "Player", we call it Adventur
     
     def potion(self, found_item, stat):
         self.potions[found_item + str(item.item_ID)] = stat
-        
+
+    def inventory_full(self, item_choice):
+        choice = input(f"Your inventory is full, please decide on if you want to replace an item with {item_choice} or discard it (Discard/Replace)\n>").lower()
+        while True:
+            if choice.index("r") == 0:
+                pass # ADD A FUNCTION TO REPLACE
+            if choice.index("d") == 0:
+                print("You discared the item.")
+                break
+
+
+
 class Final_boss(): 
     def __init__(self):
         self.name = "Hugo Beast"
-        self.properties = [20,100]
+        self.properties = [20,100] # HP,LVL
         self.stunned = False
 
+    def damage(self, ods):
+        
+        print("You slash Hugo Beast with all your might!")
+        time.sleep(1)
+        
+        if self.stunned == True:
+            self.properties[0] - adventurer.properties[1]
+            print(f"Hugo Beast was stunned and thus you managed to hurt him. His current health is {self.properties[0]}.")
+        elif final_boss.stunned == False:
+            if ods == 1 <= 30:
+                print("Hugo Beast repelled your attack, you did 0 damage.")
+            else:
+                self.properties[0] - adventurer.properties[1]
     
+    def stunned(self, ods):
         
+        if ods == 1 <= 71:
+            self.stunned = True
+            print("You managed to block the Beasts attack. \nHugo became stunned")
+        else:
+            adventurer.properties[0] -= 1
+            print(f"You were overwhelemed by the Beasts strength and took 1 points of damage.\nCurrent HP {adventurer.properties[0]}.")
+
+    def dodge(self, ods):
         
+        if ods == 1 <= 81:
+            print("You manage to dodge the Beasts attack")                  
+        else:
+            adventurer.properties[0] -= 1
+            print(f"You failed to dodge the attack.\n You take 1 points of damage.\n Current HP {adventurer.properties[0]}.")
+
+
 class Item():
     
     def __init__(self):
@@ -59,25 +106,27 @@ class Item():
         
         if substat == 1:
             rarity = f"Legendary | + 4 {item_type}"
-            if item_type == "STR":
-                adventurer.strenght(4)
+            item_strenght = 4
         elif 1 < substat <= 10:
             rarity = f"Epic | + 3 {item_type}"
-            if item_type == "STR":
-                adventurer.strenght(3)
+            item_strenght = 3
         elif 10 < substat <= 40:
             rarity = f"Uncommon | + 2 {item_type}"
-            if item_type == "STR":
-                adventurer.strenght(2)
+            item_strenght = 2
         else:
             rarity = f"Common | + 1 {item_type}"
-            if item_type == "STR":
-                adventurer.strenght(1)
+            item_strenght = 1
+        
+        print(f"a chest.\nInside the chest you find a {item_choice} with a rarity of: {rarity}")
+
+        if len(adventurer.inventory) == 5:
+            adventurer.inventory_full(item_choice)
         if item_type == "STR":
+            adventurer.strenght(item_strenght)
             adventurer.chest(item_choice, rarity)
         else:
             adventurer.potion(item_choice, rarity)
-        return item_choice, rarity
+
 
     def inventory(self):
         i = 1
@@ -90,6 +139,8 @@ class Item():
                     break
             print(f"{i}. {current_item}: {adventurer.inventory[item_ID_inventory]}")
             i += 1
+
+
 
 def monster_hp_calculation():
     health = random.randint((-5 + adventurer.properties[1]), (1 + adventurer.properties[1])) # Keeping the chances the same
@@ -110,7 +161,6 @@ print()
 adventurer = Adventurer()
 item = Item()
 final_boss = Final_boss()
-contents = ["Monster", "Chest", "Trap"]
 
 story_printing(f"Welcome to the Hall of Beasts, {adventurer.name}", 0.1)
 
@@ -119,7 +169,7 @@ story_printing(f"Welcome to the Hall of Beasts, {adventurer.name}", 0.1)
 while True:    
     door_choice = input("""What's your choice?\n[A] Door 1 (To the left)\n[B] Door 2 (Forward)\n[C] Door 3 (To the right)\n[D] See adventurer stats\n[E] See adventurer inventory\n> """).lower()
 
-    door_choice_result = random.choice(contents)
+    door_choice_result = random.randint(1, 101) # Changing ods to %
 
     if door_choice == "a":
         print(f"You open door 1 and found", end=" ")
@@ -142,28 +192,16 @@ while True:
         print("ERROR! Invalid input, please try again.")
         continue
     
-    #Dumb ways to die 
-    if door_choice_result == "Trap":
-        print("a trap and took 1 points of damage")
-        adventurer.trap(1)          
+    if door_choice_result <= 10:
+        adventurer.trap(1)
 
-    elif door_choice_result == "Chest":
-        recieved_item, recieved_stat = item.chest()
-        print(f"a chest and found a {recieved_item} inside it with a rarity of: {recieved_stat}")
+    elif door_choice_result <= 50:
+        item.chest()
         
-    elif door_choice_result == "Monster":
-        print("a very large and intimidating monster has appeared. You better prepare for battle!")
-
+    elif door_choice_result <= 100:
         monster_health = monster_hp_calculation()
-        time.sleep(1)
-        if adventurer.properties[1] > monster_health:
-            print("You defeated the monster and leveled up!")
-            adventurer.monster(0)
-        elif adventurer.properties[1] < monster_health:
-            print("The monster posseses unimaginable strength and overpowers you!") 
-            adventurer.monster(1)
-        elif adventurer.properties[1] == monster_health:
-            print("You both posses the same level of strength causing a stalemate!")
+        adventurer.monster(monster_health)
+
         
     else:
         print("ERROR! Invalid input, please try again.") 
@@ -187,27 +225,20 @@ while final_boss.properties[0] > 0:
     
     #Actions
     if BOSS_fight_action =="a":
-        print("You slash Hugo Beast with all your might!")
-        final_boss.properties[0] - adventurer.properties[1]
-        
+        damage_ods = random.randint(1, 101)
+        final_boss.damage(damage_ods)
     elif BOSS_fight_action =="b":
         Block_ods = random.randint(1,101)
-        if Block_ods == 1 <= 51:
-            final_boss.stunned = True
-            print("You managed to block the Beasts attack")
-            print("Hugo became stunned")
-        else:
-            print(f"You were overwhelemed by the Beasts strength and took 1 points of damage, Current HP {adventurer.properties[0]}.")
+        final_boss.stunned(Block_ods)
     
     elif BOSS_fight_action =="c":
         Dodge_ods = random.randint(1,101)
-        if Dodge_ods == 1 <= 71:
-            print("You manage to dodge the Beasts attack")                  
-        else:
-            adventurer.properties -= 1
-            print(f"You failed to dodge the attack, you take 1 points of damage, Current HP {adventurer.properties[0]}.")
-
-    elif BOSS_fight_action == "d":
+        final_boss.dodge(Dodge_ods)
+    else:
+        print("Error! Invalid input, please try again.")
+        continue
+        
+    '''elif BOSS_fight_action == "d":
         if item.potion >= 1:
             adventurer.properties[0] += 1
             item.potion -= 1            
@@ -216,6 +247,4 @@ while final_boss.properties[0] > 0:
             continue
         elif item.potion < 1:
             print("oh,no! You have no more potions. You have to make another choice")
-            continue
-    else:
-        print("Error! Invalid input, please try again.")
+            continue''' # ADD THIS ABOVE ONCE WORKING ON IT.
