@@ -30,7 +30,6 @@ class Adventurer(): # Instead of calling the class "Player", we call it Adventur
         print(f"a trap and took 1 points of damage \n You now have {self.properties[0]} HP left.\n")
 
     def chest(self, found_item, stat):
-        
         self.inventory[found_item + str(item.item_ID)] = stat 
 
     def strenght(self, str_increase):
@@ -40,15 +39,49 @@ class Adventurer(): # Instead of calling the class "Player", we call it Adventur
         self.potions[found_item + str(item.item_ID)] = stat
 
     def inventory_full(self, item_choice):
-        choice = input(f"Your inventory is full, please decide on if you want to replace an item with {item_choice} or discard it (Discard/Replace)\n>").lower()
         while True:
-            if choice.index("r") == 0:
-                pass # ADD A FUNCTION TO REPLACE
-            if choice.index("d") == 0:
+            choice = input(f"Your inventory is full, please decide on if you want to replace an item with {item_choice} or discard it (Discard/Replace)\n>").lower()
+            if choice.startswith("r"):
+                while True:
+                    print("Which of the follow items do you want to discard?")
+                    item.inventory()
+                    item_list = []
+                    for item_in_inventory in self.inventory.keys():
+                        item_list.append(item_in_inventory)
+                    try:
+                        chosen_item = (int(input("> ")) - 1)
+                        if 1 <= chosen_item <= 5:
+                            print(f"You removed the item: {item_list(chosen_item)}: {self.inventory[item_list(chosen_item)]}")
+                            self.inventory.pop(item_list[(chosen_item)])
+                            break
+                    except ValueError:
+                        print("ERROR! Invalid input, please try again.")
+                        # PROBLEM HÄR UPPE: MÅSTE FIXAS
+                break
+            elif choice.startswith("d"):
                 print("You discared the item.")
                 break
+            else:
+                print("ERROR! Invalid input, please try again.")
 
+class Stunned_effect():
+    def __innit__(self):
+        self.duration = 0
 
+    def apply_effect_boss():
+        Final_boss.stunned = True
+
+    def start_effect(self):
+        self.duration = 2
+        self.active = True
+
+    def reduce_effect_boss(self):
+        self.duration -= 1
+        if self.duration <= 0:
+            Final_boss.stunned = False
+            print("Hugo is no longer stunned!")
+        else:
+             print(f"Effect duration remaining: {self.duration} turn(s).")
 
 class Final_boss(): 
     def __init__(self):
@@ -80,7 +113,6 @@ class Final_boss():
             print(f"You were overwhelemed by the Beasts strength and took 1 points of damage.\nCurrent HP {adventurer.properties[0]}.")
 
     def dodge(self, ods):
-        
         if ods == 1 <= 81:
             print("You manage to dodge the Beasts attack")                  
         else:
@@ -119,11 +151,12 @@ class Item():
         
         print(f"a chest.\nInside the chest you find a {item_choice} with a rarity of: {rarity}")
 
-        if len(adventurer.inventory) == 5:
-            adventurer.inventory_full(item_choice)
         if item_type == "STR":
-            adventurer.strenght(item_strenght)
-            adventurer.chest(item_choice, rarity)
+            if len(adventurer.inventory) == 5:
+                adventurer.inventory_full(item_choice)
+            else:
+                adventurer.strenght(item_strenght)
+                adventurer.chest(item_choice, rarity)
         else:
             adventurer.potion(item_choice, rarity)
 
@@ -143,7 +176,7 @@ class Item():
 
 
 def monster_hp_calculation():
-    health = random.randint((-5 + adventurer.properties[1]), (1 + adventurer.properties[1])) # Keeping the chances the same
+    health = random.randint((-4 + adventurer.properties[1]), (1 + adventurer.properties[1])) # Keeping the chances the same
     return health
 
 def story_printing(string, seconds):
@@ -167,7 +200,7 @@ story_printing(f"Welcome to the Hall of Beasts, {adventurer.name}", 0.1)
 
 # While Loop
 while True:    
-    door_choice = input("""What's your choice?\n[A] Door 1 (To the left)\n[B] Door 2 (Forward)\n[C] Door 3 (To the right)\n[D] See adventurer stats\n[E] See adventurer inventory\n> """).lower()
+    door_choice = input("""What's your choice?\n[A] Door 1 (To the left)\n[B] Door 2 (Forward)\n[C] Door 3 (To the right)\n[D] See adventurer stats\n[E] See adventurer inventory\n[F] See/Use Potions\n> """).lower()
 
     door_choice_result = random.randint(1, 101) # Changing ods to %
 
@@ -187,7 +220,10 @@ while True:
     elif door_choice == "e":
         item.inventory()
         continue
-    
+
+    elif door_choice == "f":
+        pass # FIXAR SENARE
+
     else:
         print("ERROR! Invalid input, please try again.")
         continue
@@ -207,7 +243,7 @@ while True:
         print("ERROR! Invalid input, please try again.") 
         continue 
     
-    if adventurer.properties[0] == 0:
+    if adventurer.properties[0] <= 0:
         print("You have reached 0 HP and died!")
         quit()
 
@@ -227,6 +263,7 @@ while final_boss.properties[0] > 0:
     if BOSS_fight_action =="a":
         damage_ods = random.randint(1, 101)
         final_boss.damage(damage_ods)
+
     elif BOSS_fight_action =="b":
         Block_ods = random.randint(1,101)
         final_boss.stunned(Block_ods)
@@ -234,6 +271,7 @@ while final_boss.properties[0] > 0:
     elif BOSS_fight_action =="c":
         Dodge_ods = random.randint(1,101)
         final_boss.dodge(Dodge_ods)
+        
     else:
         print("Error! Invalid input, please try again.")
         continue
@@ -247,4 +285,4 @@ while final_boss.properties[0] > 0:
             continue
         elif item.potion < 1:
             print("oh,no! You have no more potions. You have to make another choice")
-            continue''' # ADD THIS ABOVE ONCE WORKING ON IT.
+            continue''' # ADD THIS ABOVE ONCE FINISHED WORKING ON IT.
